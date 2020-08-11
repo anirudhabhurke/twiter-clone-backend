@@ -1,16 +1,12 @@
 import { Router } from 'express';
-import { fetchUser, createUser, getAllUsers, updateUser, deleteUser } from '../controllers/user';
+import { postSignup, postLogin, postLogout } from '../controllers/auth';
 
 const router = Router();
 
-router.param('userId', fetchUser);
+router.post('/signup', postSignup);
 
-router.post('/', createUser);
+router.post('/login', postLogin);
 
-router.get('/', getAllUsers);
-
-router.patch('/:userId', updateUser);
-
-router.delete('/:userId', deleteUser);
+router.post('/logout', postLogout);
 
 export default router;
