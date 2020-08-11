@@ -43,16 +43,6 @@ Tweet.hasMany(Comment);
 
 sequelize
       .sync({ force: false })
-      // remove later
-      .then((_result) => {
-            return User.findByPk(1);
-      })
-      .then((user) => {
-            if (!user) {
-                  return User.create({ username: 'Anirudh', email: 'anirudh@privacyflake.com' });
-            }
-            return Promise.resolve(user);
-      })
       .then(() => {
             app.listen(9000);
       })

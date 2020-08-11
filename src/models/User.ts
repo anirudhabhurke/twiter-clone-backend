@@ -19,6 +19,10 @@ const User = sequelize.define('user', {
             allowNull: false,
             unique: true,
       },
+      password: {
+            type: STRING,
+            allowNull: false,
+      },
 });
 
 export default User;
