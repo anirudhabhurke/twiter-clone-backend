@@ -2,11 +2,19 @@ import { Request, Response, NextFunction } from 'express';
 import User from '../models/User';
 import { Op } from 'sequelize';
 import bcrypt from 'bcrypt';
+import expressJwt from 'express-jwt';
+import jwt from 'jsonwebtoken';
+import { validationResult } from 'express-validator';
 
 export const postSignup = (req: Request, res: Response, next: NextFunction) => {
       const emailInput = req.body.email;
       const usernameInput = req.body.username;
       const passwordInput = req.body.password;
+
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+            return res.status(422).json({ error: errors.array()[0].msg });
+      }
 
       User.findOne({
             where: {
@@ -33,6 +41,11 @@ export const postLogin = (req: Request, res: Response, next: NextFunction) => {
       const emailInput = req.body.email;
       const passwordInput = req.body.password;
 
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+            return res.status(422).json({ error: errors.array()[0].msg });
+      }
+
       User.findOne({ where: { email: emailInput }, raw: true })
             .then((user: any) => {
                   if (!user) {
@@ -40,14 +53,21 @@ export const postLogin = (req: Request, res: Response, next: NextFunction) => {
                   } else {
                         bcrypt.compare(passwordInput, user.password, function (err, result) {
                               if (result) {
-                                    res.json({ message: 'Successful login' });
+                                    const token = jwt.sign({ id: user._id }, 'TWITTER_CLONE');
+                                    res.json({ message: 'Successful login', token });
                               } else {
-                                    res.json({ message: 'Wrong password' });
+                                    res.json({ error: 'Wrong password' });
                               }
                         });
                   }
             })
             .catch((error) => console.log(error));
 };
+
+export const isSignedIn = expressJwt({
+      secret: 'TWITTER_CLONE',
+      requestProperty: 'auth',
+      algorithms: ['HS256'],
+});
 
 export const postLogout = (req: Request, res: Response, next: NextFunction) => {};

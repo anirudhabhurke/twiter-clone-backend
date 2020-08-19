@@ -10,20 +10,23 @@ import {
       createComment,
       deleteComment,
 } from '../controllers/tweets';
+import { isSignedIn } from '../controllers/auth';
+import { body } from 'express-validator';
 
 const router = Router();
 
 router.param('tweetId', fetchTweet);
 
-router.get('/', getAllTweets);
+router.get('/', isSignedIn, getAllTweets);
+router.get('/user-tweets', isSignedIn, getAllUserTweets);
 
-router.get('/user-tweets', getAllUserTweets);
-router.post('/', createTweet);
-router.patch('/:tweetId', likeTweet);
-router.delete('/:tweetId', deleteTweet);
+router.post('/', [body('content', 'This tweet is invalid').isAlphanumeric()], isSignedIn, createTweet);
 
-router.get('/:tweetId/comments', viewComments);
-router.post('/:tweetId/new-comment', createComment);
-router.delete('/:tweetId/delete-comment/:commentId', deleteComment);
+router.patch('/:tweetId', isSignedIn, likeTweet);
+router.delete('/:tweetId', isSignedIn, deleteTweet);
+
+router.get('/:tweetId/comments', isSignedIn, viewComments);
+router.post('/:tweetId/new-comment', [body('comment', 'This comment is invalid').isAlphanumeric()], isSignedIn, createComment);
+router.delete('/:tweetId/delete-comment/:commentId', isSignedIn, deleteComment);
 
 export default router;

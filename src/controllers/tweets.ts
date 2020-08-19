@@ -3,6 +3,7 @@ import RequestCustom from '../utils/RequestCustom';
 import Tweet from '../models/Tweet';
 import Comment from '../models/Comment';
 import User from '../models/User';
+import { validationResult } from 'express-validator';
 
 export const fetchTweet: RequestParamHandler = (req: RequestCustom, res: Response, next: NextFunction, tweetId: number) => {
       Tweet.findByPk(tweetId)
@@ -33,6 +34,12 @@ export const getAllTweets: RequestHandler = (req: RequestCustom, res: Response, 
 
 export const createTweet: RequestHandler = (req: RequestCustom, res: Response, next: NextFunction) => {
       const content = req.body.content;
+
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+            return res.status(422).json({ error: errors.array()[0].msg });
+      }
+
       req.user
             .createTweet({
                   content: content,
@@ -91,6 +98,11 @@ export const viewComments: RequestHandler = (req: RequestCustom, res: Response, 
 };
 
 export const createComment: RequestHandler = (req: RequestCustom, res: Response, next: NextFunction) => {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+            return res.status(422).json({ error: errors.array()[0].msg });
+      }
+
       req.tweet
             .createComment({
                   comment: req.body.comment,

@@ -44,6 +44,7 @@ Tweet.hasMany(Comment);
 sequelize
       .sync({ force: false })
       .then(() => {
+            console.log('DATABASE CONNECTED');
             app.listen(9000);
       })
       .catch((error) => {
