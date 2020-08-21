@@ -5,25 +5,12 @@ import userRoutes from './routes/user';
 import User from './models/User';
 import Tweet from './models/Tweet';
 import sequelize from './utils/database';
-import RequestCustom from './utils/RequestCustom';
 import Comment from './models/Comment';
 import cors from 'cors';
 
 const app = express();
 app.use(json());
 app.use(cors());
-
-// remove later
-app.use((req: RequestCustom, _res: Response, next: NextFunction) => {
-      User.findByPk(1)
-            .then((user) => {
-                  req.user = user;
-                  next();
-            })
-            .catch((err) => {
-                  console.log(err);
-            });
-});
 
 app.use('/tweets', tweetRoutes);
 app.use('/user', userRoutes);

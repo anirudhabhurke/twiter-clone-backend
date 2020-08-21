@@ -5,7 +5,7 @@ import Comment from '../models/Comment';
 import User from '../models/User';
 import { validationResult } from 'express-validator';
 
-export const fetchTweet: RequestParamHandler = (req: RequestCustom, res: Response, next: NextFunction, tweetId: number) => {
+export const fetchTweetById: RequestParamHandler = (req: RequestCustom, res: Response, next: NextFunction, tweetId: number) => {
       Tweet.findByPk(tweetId)
             .then((data) => {
                   if (!data) {

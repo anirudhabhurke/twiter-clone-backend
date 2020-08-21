@@ -1,10 +1,28 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction, RequestParamHandler } from 'express';
 import User from '../models/User';
 import { Op } from 'sequelize';
 import bcrypt from 'bcrypt';
 import expressJwt from 'express-jwt';
 import jwt from 'jsonwebtoken';
 import { validationResult } from 'express-validator';
+import RequestCustom from '../utils/RequestCustom';
+
+export const fetchUserById: RequestParamHandler = (req: RequestCustom, res: Response, next: NextFunction, userId: number) => {
+      User.findByPk(userId)
+            .then((data) => {
+                  if (!data) {
+                        res.status(404).json({
+                              error: 'User not found',
+                        });
+                  } else {
+                        req.user = data;
+                        next();
+                  }
+            })
+            .catch((error) => {
+                  console.log(error);
+            });
+};
 
 export const postSignup = (req: Request, res: Response, next: NextFunction) => {
       const emailInput = req.body.email;
@@ -53,8 +71,8 @@ export const postLogin = (req: Request, res: Response, next: NextFunction) => {
                   } else {
                         bcrypt.compare(passwordInput, user.password, function (err, result) {
                               if (result) {
-                                    const token = jwt.sign({ id: user._id }, 'TWITTER_CLONE');
-                                    res.json({ message: 'Successful login', token });
+                                    const token = jwt.sign({ id: user.id }, 'TWITTER_CLONE');
+                                    res.json({ message: 'Successful login', token, userId: user.id });
                               } else {
                                     res.json({ error: 'Wrong password' });
                               }
@@ -69,5 +87,3 @@ export const isSignedIn = expressJwt({
       requestProperty: 'auth',
       algorithms: ['HS256'],
 });
-
-export const postLogout = (req: Request, res: Response, next: NextFunction) => {};

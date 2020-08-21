@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { postSignup, postLogin, postLogout, isSignedIn } from '../controllers/auth';
+import { postSignup, postLogin } from '../controllers/auth';
 import { body } from 'express-validator';
 
 const router = Router();
@@ -22,7 +22,5 @@ router.post(
       ],
       postLogin
 );
-
-router.post('/logout', isSignedIn, postLogout);
 
 export default router;
