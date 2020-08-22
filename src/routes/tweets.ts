@@ -27,7 +27,7 @@ router.patch('/:tweetId', isSignedIn, likeTweet);
 router.delete('/:tweetId/:userId', isSignedIn, deleteTweet);
 
 router.get('/:tweetId/comments', isSignedIn, viewComments);
-router.post('/:tweetId/:userId/new-comment', [body('comment', 'This comment is invalid').isString()], isSignedIn, createComment);
+router.post('/:tweetId/:userId/new-comment', isSignedIn, [body('comment', 'This comment is invalid').isString()], createComment);
 router.delete('/:tweetId/:userId/delete-comment/:commentId/', isSignedIn, deleteComment);
 
 export default router;

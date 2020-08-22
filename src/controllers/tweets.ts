@@ -108,11 +108,12 @@ export const createComment: RequestHandler = (req: RequestCustom, res: Response,
                   comment: req.body.comment,
             })
             .then((data: any) => {
+                  return Comment.update({ userId: req.user.id }, { where: { id: data.dataValues.id } });
+            })
+            .then(() => {
                   res.json({ message: 'Comment created' });
             })
-            .catch((error: any) => {
-                  console.log(error);
-            });
+            .catch((error: any) => console.log(error));
 };
 
 export const deleteComment: RequestHandler = (req: RequestCustom, res: Response, next: NextFunction) => {
