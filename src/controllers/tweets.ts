@@ -5,6 +5,8 @@ import Comment from '../models/Comment';
 import User from '../models/User';
 import { validationResult } from 'express-validator';
 
+const ITEMS_PER_PAGE = 10;
+
 export const fetchTweetById: RequestParamHandler = (req: RequestCustom, res: Response, next: NextFunction, tweetId: number) => {
       Tweet.findByPk(tweetId)
             .then((data) => {
@@ -23,7 +25,10 @@ export const fetchTweetById: RequestParamHandler = (req: RequestCustom, res: Res
 };
 
 export const getAllTweets: RequestHandler = (req: RequestCustom, res: Response, next: NextFunction) => {
-      Tweet.findAll({ raw: true, include: [User] })
+      const pageNo = +req.params.pageNo;
+      let offset = 0 + (pageNo - 1) * ITEMS_PER_PAGE;
+
+      Tweet.findAll({ raw: true, include: [User], limit: ITEMS_PER_PAGE, offset: offset })
             .then((data: any) => {
                   res.status(200).json({ data });
             })

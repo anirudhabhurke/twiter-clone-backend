@@ -18,7 +18,7 @@ const router = Router();
 router.param('tweetId', fetchTweetById);
 router.param('userId', fetchUserById);
 
-router.get('/', isSignedIn, getAllTweets);
+router.get('/:pageNo', isSignedIn, getAllTweets);
 router.get('/user-tweets/:userId', isSignedIn, getAllUserTweets);
 
 router.post('/:userId', [body('content', 'This tweet is invalid').isString()], isSignedIn, createTweet);
